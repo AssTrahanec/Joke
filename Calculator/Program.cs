@@ -8,9 +8,18 @@ namespace Calculator
     {
         static void Main(string[] args)
         {
-            string str = "12.3+22-33+44";
+            var str = "1+1+1";
             var calculator = new Calculation(str);
-            Console.WriteLine(calculator.Calculate());
+            try
+            {
+                Console.WriteLine(calculator.Calculate());
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Division by zero");
+            }
+
+            
         }
     }
 }

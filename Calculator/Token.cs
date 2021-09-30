@@ -55,7 +55,7 @@ namespace Calculator
                         tokenList.Add(new Token(TokenType.Cap, 3));
                         break;
                     case '(':
-                        tokenList.Add( new Token(TokenType.LBracket, 0));
+                        tokenList.Add( new Token(TokenType.LBracket, -(i + 1)));
                         break;
                     case ')':
                         tokenList.Add(new Token(TokenType.RBracket, 0));
