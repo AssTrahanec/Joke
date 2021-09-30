@@ -1,93 +1,78 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using Microsoft.VisualBasic;
+
+enum TokenType
+{
+    Plus = '+',
+    Number,
+    Minus = '-',
+    Ast = '*',
+    Slash = '/',
+    Cap = '^',
+    LBracket = '(',
+    RBracket = ')'
+}
 
 namespace Calculator
 {
-    public class Token
+    internal class Token
     {
-        public char _type { get; set; }
+        public TokenType _type { get; set; }
         public double _value { get; set; }
+
+        public Token(TokenType type, double value)
+        {
+            this._type = type;
+            this._value = value;
+        }
         
         public static List<Token> StringToTokenList(string str)
         {
             str = str.Replace(" ", "");
-            str = str.Replace(".", ",");
             var tokenList = new List<Token>();
-            
+
             for (var i = 0; i < str.Length; i++)
             {
-                var token = new Token();
-                var k = 0;
-                switch (str[i])
+               switch (str[i])
                 {
                     case '+':
-                        token._type = '+';
-                        token._value = 1;
-                        tokenList.Add(token);
+                        tokenList.Add(new Token(TokenType.Plus, 1));
                         break;
                     case '-':
-                        token._type = '-';
-                        token._value = 1;
-                        tokenList.Add(token);
+                        tokenList.Add(new Token(TokenType.Minus, 1));
                         break;
                     case '*':
-                        token._type = '*';
-                        token._value = 2;
-                        tokenList.Add(token);
+                        tokenList.Add( new Token(TokenType.Ast, 2));
                         break;
                     case '/':
-                        token._type = '/';
-                        token._value = 2;
-                        tokenList.Add(token);
+                        tokenList.Add( new Token(TokenType.Slash, 2));
                         break;
                     case '^':
-                        token._type = '^';
-                        token._value = 3;
-                        tokenList.Add(token);
+                        tokenList.Add(new Token(TokenType.Cap, 3));
                         break;
                     case '(':
-                        token._type = '(';
-                        token._value = 0;
-                        tokenList.Add(token);
+                        tokenList.Add( new Token(TokenType.LBracket, 0));
                         break;
                     case ')':
-                        token._type = ')';
-                        token._value = 0;
-                        tokenList.Add(token);
+                        tokenList.Add(new Token(TokenType.RBracket, 0));
                         break;
                     default:
-                        while (i + k < str.Length)
+                        var k = 0;
+                        while (i + k < str.Length && "1234567890.".Contains(str[i + k]))
                         {
-                            try
-                            {
-                                if (i == 0 && k == 0)
-                                    k++;
-                                else
-                                {
-                                    k++;
-                                    Convert.ToDouble(str.Substring(i, k));
-                                }
-                            }
-                            catch
-                            {
-                                token._type = '0';
-                                token._value = Convert.ToDouble(str.Substring(i, k - 1));
-                                tokenList.Add(token);
-                                i = i + k - 2;
-                                break;
-                            }
+                            k++;
                         }
+
+                        tokenList.Add(new Token(TokenType.Number, double.Parse(str.Substring(i, k), CultureInfo.InvariantCulture)));
+
+                        i += k - 1;
                         
                         break;
                 }
-
-                if (i + k != str.Length) continue;
-                token._type = '0';
-                token._value = Convert.ToDouble(str.Substring(i, k));
-                            
-                tokenList.Add(token);
-                break;
             }
             
             return tokenList;

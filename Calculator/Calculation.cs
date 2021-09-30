@@ -13,7 +13,7 @@ namespace Calculator
         
         public Calculation(string str)
         {
-            _tokensList =Token.StringToTokenList(str);
+            _tokensList = Token.StringToTokenList(str);
             foreach (var token in _tokensList)
             {
                Console.WriteLine(token._value); 
@@ -26,7 +26,7 @@ namespace Calculator
             foreach (var token in _tokensList)
             {
                 Console.WriteLine("token._value ={0}({1})",token._value,token._type);
-                if (token._type == '0')
+                if (token._type == TokenType.Number)
                 {
                     _numsStack.Push(token);
                 }
@@ -57,49 +57,49 @@ namespace Calculator
 
         private void ExecuteOperation()
         {
-            var token = new Token();
+            Token token = null;
             double result;
             var arg1 = _numsStack.Pop()._value;
             var arg2 = _numsStack.Pop()._value;
             switch (_operatorsStack.Pop()._type)
             {
-                case '+':
+                case TokenType.Plus:
                     result = arg1 + arg2;
-                    token._type = '0';
+                    token._type = TokenType.Number;
                     token._value = result;
                     _numsStack.Push(token);
                     break;
-                case '-':
+                case TokenType.Minus:
                     result = arg1 - arg2;
-                    token._type = '0';
+                    token._type = TokenType.Number;
                     token._value = result;
                     _numsStack.Push(token);
                     break;
-                case '*':
+                case TokenType.Ast:
                     result = arg1 * arg2;
-                    token._type = '0';
+                    token._type = TokenType.Number;
                     token._value = result;
                     _numsStack.Push(token);
                     break;
-                case '/':
+                case TokenType.Slash:
                     if(arg1 == 0)
                         Console.WriteLine("Деление на 0");
                     else
                     {
                         result = arg2 / arg1;
-                        token._type = '0';
+                        token._type = TokenType.Number;
                         token._value = result;
                         _numsStack.Push(token);
                     }
                     break;
-                case '^':
+                case TokenType.Cap:
                     result = Math.Pow(arg1,arg2);
-                    token._type = '0';
+                    token._type = TokenType.Number;
                     token._value = result;
                     _numsStack.Push(token);
                     break;
-                case ')':
-                    while (_operatorsStack.Peek()._type != '(')
+                case TokenType.RBracket:
+                    while (_operatorsStack.Peek()._type != TokenType.LBracket)
                         ExecuteOperation();
                     _operatorsStack.Pop();
                     break;
