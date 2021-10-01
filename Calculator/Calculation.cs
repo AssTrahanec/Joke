@@ -12,20 +12,12 @@ namespace Calculator
         public Calculation(string str)
         {
             _tokensList = Token.StringToTokenList(str);
-
-            foreach (var token in _tokensList)
-            {
-                Console.WriteLine(token._value);
-            }
-
-            Console.WriteLine();
         }
 
         public double Calculate()
         {
             foreach (var token in _tokensList)
             {
-                Console.WriteLine("token._value ={0}({1})", token._value, token._type);
                 if (token._type == TokenType.Number)
                 {
                     _numsStack.Push(token._value);
