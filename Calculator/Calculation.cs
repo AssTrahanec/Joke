@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Calculator
 {
@@ -33,16 +32,28 @@ namespace Calculator
                 }
                 else
                 {
-                    if (_operatorsStack.TryPeek(out var lastOperation) && token._value <= lastOperation._value)
+                    if (token._type == TokenType.RBracket)
                     {
+                        _operatorsStack.Push(token);
                         ExecuteOperation();
                     }
-
-                    _operatorsStack.Push(token);
+                    else if (token._type == TokenType.LBracket)
+                    {
+                        _operatorsStack.Push(token);
+                    }
+                    else if (_operatorsStack.TryPeek(out var lastOperation) && token._value <= lastOperation._value)
+                    {
+                        ExecuteOperation();
+                        _operatorsStack.Push(token);
+                    }
+                    else
+                    {
+                        _operatorsStack.Push(token);
+                    }
                 }
             }
 
-            while (_operatorsStack.Any())
+            while (_operatorsStack.TryPeek(out _))
             {
                 ExecuteOperation();
             }
@@ -76,7 +87,6 @@ namespace Calculator
                     {
                         ExecuteOperation();
                     }
-
                     _operatorsStack.Pop();
                     break;
             }

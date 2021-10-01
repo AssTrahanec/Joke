@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using Microsoft.VisualBasic;
 
 enum TokenType
 {
@@ -29,7 +25,7 @@ namespace Calculator
             this._type = type;
             this._value = value;
         }
-        
+
         public static List<Token> StringToTokenList(string str)
         {
             str = str.Replace(" ", "");
@@ -37,7 +33,7 @@ namespace Calculator
 
             for (var i = 0; i < str.Length; i++)
             {
-               switch (str[i])
+                switch (str[i])
                 {
                     case '+':
                         tokenList.Add(new Token(TokenType.Plus, 1));
@@ -46,16 +42,33 @@ namespace Calculator
                         tokenList.Add(new Token(TokenType.Minus, 1));
                         break;
                     case '*':
-                        tokenList.Add( new Token(TokenType.Ast, 2));
+                        tokenList.Add(new Token(TokenType.Ast, 2));
                         break;
                     case '/':
-                        tokenList.Add( new Token(TokenType.Slash, 2));
+                        tokenList.Add(new Token(TokenType.Slash, 2));
                         break;
                     case '^':
                         tokenList.Add(new Token(TokenType.Cap, 3));
                         break;
                     case '(':
-                        tokenList.Add( new Token(TokenType.LBracket, -(i + 1)));
+                        if (str[i + 1] == '-') // if "-" is unary operator
+                        {
+                            var t = 0;
+                            while (str[i + t] != ')')
+                            {
+                                t++;
+                            }
+
+                            tokenList.Add(new Token(TokenType.Number,
+                                double.Parse(str.Substring(i + 1, t - 1), CultureInfo.InvariantCulture)));
+
+                            i += t;
+                        }
+                        else // if "-" is binary
+                        {
+                            tokenList.Add(new Token(TokenType.LBracket, 0));
+                        }
+
                         break;
                     case ')':
                         tokenList.Add(new Token(TokenType.RBracket, 0));
@@ -67,33 +80,16 @@ namespace Calculator
                             k++;
                         }
 
-                        tokenList.Add(new Token(TokenType.Number, double.Parse(str.Substring(i, k), CultureInfo.InvariantCulture)));
+                        tokenList.Add(new Token(TokenType.Number,
+                            double.Parse(str.Substring(i, k), CultureInfo.InvariantCulture)));
 
                         i += k - 1;
-                        
+
                         break;
                 }
             }
-            
+
             return tokenList;
         }
-        // public static Stack<Token> MakeStackOfNumTokens(List<Token> listOfTokens)
-        // {
-        //     var stack = new Stack<Token>();
-        //     foreach (var token in listOfTokens.Where(token => token._type == '0'))
-        //     {
-        //         stack.Push(token);
-        //     }
-        //     return stack;
-        // }
-        // public static Stack<Token> MakeStackOfOperatorTokens(List<Token> listOfTokens)
-        // {
-        //     var stack = new Stack<Token>();
-        //     foreach (var token in listOfTokens.Where(token => token._type != '0'))
-        //     {
-        //         stack.Push(token);
-        //     }
-        //     return stack;
-        // }
     }
 }
